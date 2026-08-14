@@ -5,6 +5,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 import validators
 import requests
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -115,13 +116,25 @@ def url_checks_post(id):
                 flash('Произошла ошибка при проверке', 'danger')
                 return redirect(url_for('url_show', id=id))
 
-            created_at = datetime.now()
+            soup = BeautifulSoup(response.text, 'html.parser')
+
             status_code = response.status_code
             
+            h1_tag = soup.find('h1')
+            h1 = h1_tag.get_text().strip() if h1_tag else ''
+
+            title_tag = soup.find('title')
+            title = title_tag.get_text().strip() if title_tag else ''
+
+            desc_tag = soup.find('meta', attrs={'name': 'description'})
+            description = desc_tag.get('content', '').strip() if desc_tag and desc_tag.get('content') else ''
+
+            created_at = datetime.now()
+            
             cur.execute(
-                """INSERT INTO url_checks (url_id, status_code, created_at) 
-                   VALUES (%s, %s, %s)""",
-                (id, status_code, created_at)
+                """INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) 
+                   VALUES (%s, %s, %s, %s, %s, %s)""",
+                (id, status_code, h1, title, description, created_at)
             )
             conn.commit()
 
