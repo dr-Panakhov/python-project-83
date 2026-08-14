@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-lg mt-3">
+  <div class="row">
+    <div class="col-12 col-md-10 col-lg-8 mx-auto border rounded p-4 bg-light">
+      <h1 class="display-3">Анализатор страниц</h1>
+      <p class="lead">Бесплатно проверяйте сайты на SEO-пригодность</p>
+      
+      <form action="/urls" method="post" class="d-flex justify-content-center">
+        <input type="text" name="url" placeholder="https://www.example.com" class="form-control form-control-lg me-2" required>
+        <input type="submit" value="Проверить" class="btn btn-primary btn-lg px-4 text-uppercase fw-bold">
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
