@@ -66,7 +66,16 @@ def urls_post():
 def urls_index():
     with get_db_connection() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-            cur.execute("SELECT * FROM urls ORDER BY id DESC")
+            cur.execute("""
+                SELECT DISTINCT ON (urls.id)
+                    urls.id,
+                    urls.name,
+                    url_checks.created_at AS last_check,
+                    url_checks.status_code
+                FROM urls
+                LEFT JOIN url_checks ON urls.id = url_checks.url_id
+                ORDER BY urls.id DESC, url_checks.id DESC
+            """)
             urls = cur.fetchall()
 
     return render_template('urls.html', urls=urls)
@@ -79,7 +88,32 @@ def url_show(id):
             cur.execute("SELECT * FROM urls WHERE id = %s", (id,))
             url = cur.fetchone()
 
-    if not url:
-        return "Not Found", 404
+            if not url:
+                return "Not Found", 404
+            
+            cur.execute("SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC", (id,))
+            checks = cur.fetchall()
 
-    return render_template('url.html', url=url)
+    return render_template('url.html', url=url, checks=checks)
+
+
+@app.route('/urls/<int:id>/checks', methods=['POST'])
+def url_checks_post(id):
+    with get_db_connection() as conn:
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+            cur.execute("SELECT id FROM urls WHERE id = %s", (id,))
+            url = cur.fetchone()
+            
+            if not url:
+                return "Not Found", 404
+
+            created_at = datetime.now()
+            cur.execute(
+                """INSERT INTO url_checks (url_id, created_at) 
+                   VALUES (%s, %s)""",
+                (id, created_at)
+            )
+            conn.commit()
+
+    flash('Страница успешно проверена', 'success')
+    return redirect(url_for('url_show', id=id))

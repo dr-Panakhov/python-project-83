@@ -38,6 +38,16 @@
       </tr>
     </thead>
     <tbody>
+      {% for check in checks %}
+      <tr>
+        <td>{{ check.id }}</td>
+        <td>{{ check.status_code if check.status_code else '' }}</td>
+        <td>{{ check.h1 if check.h1 else '' }}</td>
+        <td>{{ check.title if check.title else '' }}</td>
+        <td>{{ check.description if check.description else '' }}</td>
+        <td>{{ check.created_at.date() }}</td>
+      </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>
