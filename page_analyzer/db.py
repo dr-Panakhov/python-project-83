@@ -2,6 +2,7 @@ import os
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -44,8 +45,8 @@ def add_url(name):
     with get_db_connection() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
             cur.execute(
-                "INSERT INTO urls (name) VALUES (%s) RETURNING id",
-                (name,)
+                "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id",
+                (name, datetime.now())
             )
             new_id = cur.fetchone().id
             conn.commit()
@@ -67,8 +68,8 @@ def add_url_check(url_id, status_code, h1, title, description):
         with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
             cur.execute(
                 """INSERT INTO url_checks
-                   (url_id, status_code, h1, title, description)
-                   VALUES (%s, %s, %s, %s, %s)""",
-                (url_id, status_code, h1, title, description)
+                   (url_id, status_code, h1, title, description, created_at)
+                   VALUES (%s, %s, %s, %s, %s, %s)""",
+                (url_id, status_code, h1, title, description, datetime.now())
             )
             conn.commit()

@@ -16,14 +16,14 @@
         </tr>
         <tr>
           <td>Дата создания</td>
-          <td>{{ url.created_at.date() }}</td>
+          <td>{{ url.created_at.strftime('%Y-%m-%d') if url.created_at else '' }}</td>
         </tr>
       </tbody>
     </table>
   </div>
   
   <h2 class="mt-5">Проверки</h2>
-  <form method="post" action="/urls/{{ url.id }}/checks">
+  <form method="post" action="{{ url_for('url_checks_post', id=url.id) }}">
     <input type="submit" class="btn btn-primary" value="Запустить проверку">
   </form>
   <table class="table table-bordered table-hover mt-2" data-test="checks">
@@ -41,11 +41,11 @@
       {% for check in checks %}
       <tr>
         <td>{{ check.id }}</td>
-        <td>{{ check.status_code if check.status_code else '' }}</td>
+        <td>{{ check.status_code if check.status_code is not none else '' }}</td>
         <td>{{ check.h1 | truncate(200, true) if check.h1 else '' }}</td>
         <td>{{ check.title | truncate(200, true) if check.title else '' }}</td>
         <td>{{ check.description | truncate(200, true) if check.description else '' }}</td>
-        <td>{{ check.created_at.date() }}</td>
+        <td>{{ check.created_at.strftime('%Y-%m-%d') if check.created_at else '' }}</td>
       </tr>
       {% endfor %}
     </tbody>
