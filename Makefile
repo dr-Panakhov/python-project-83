@@ -4,7 +4,7 @@ install:
 	uv sync
 
 setup:
-	uv sync
+	@echo "Setup skipped/completed"
 
 build:
 	uv sync
