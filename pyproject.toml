@@ -27,5 +27,3 @@ packages = ["page_analyzer"]
 dev = [
     "ruff",
 ]
-
-
