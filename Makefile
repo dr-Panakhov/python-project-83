@@ -17,3 +17,5 @@ render-start:
 
 lint:
 	uv run ruff check page_analyzer
+	
+	
