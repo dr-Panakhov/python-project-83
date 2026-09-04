@@ -3,11 +3,8 @@ PORT ?= 8000
 install:
 	uv sync
 
-setup:
-	@echo "Setup skipped/completed"
-
 build:
-	uv sync
+	./build.sh
 
 dev:
 	uv run flask --debug --app page_analyzer:app run
