@@ -1,18 +1,19 @@
 import os
+
 import requests
 from dotenv import load_dotenv
 from flask import (
     Flask,
+    flash,
+    redirect,
     render_template,
     request,
-    redirect,
     url_for,
-    flash,
 )
 
 from page_analyzer import db
-from page_analyzer.url_validator import validate, normalize
 from page_analyzer.parser import parse_html
+from page_analyzer.url_validator import normalize, validate
 
 load_dotenv()
 
